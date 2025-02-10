@@ -9,16 +9,42 @@
     tools:context=".AddByCoordinatesActivity">
 
     <TextView
+        android:id="@+id/nameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/name_label"
+        android:textSize="@dimen/middle_text_size"
+        android:labelFor="@id/latitudeAutoComplete"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/coordinatesNameEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:autofillHints="@string/name_edit"
+        android:hint="@string/name_edit"
+        android:inputType="text"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toBottomOf="@id/nameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
         android:id="@+id/latitudeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:text="@string/latitude_hint"
+        android:text="@string/latitude"
         android:textSize="@dimen/middle_text_size"
         android:labelFor="@id/latitudeAutoComplete"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/latitudeLayout"/>
+        app:layout_constraintTop_toBottomOf="@id/coordinatesNameEdit"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/latitudeLayout"
@@ -27,9 +53,9 @@
         android:layout_margin="@dimen/margin"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
 
+        app:layout_constraintTop_toBottomOf="@id/latitudeLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/latitudeText"
-        app:layout_constraintBottom_toTopOf="@+id/longitudeLabel">
+        app:layout_constraintEnd_toStartOf="@+id/latitudeText">
 
         <AutoCompleteTextView
             android:id="@+id/latitudeAutoComplete"
@@ -49,21 +75,21 @@
         android:inputType="numberDecimal"
         android:textSize="@dimen/middle_text_size"
 
+        app:layout_constraintTop_toBottomOf="@id/latitudeLabel"
         app:layout_constraintStart_toEndOf="@+id/latitudeLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/longitudeLabel"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/longitudeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:text="@string/longitude_hint"
+        android:text="@string/longitude"
         android:textSize="@dimen/middle_text_size"
         android:labelFor="@id/longitudeAutoComplete"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/longitudeLayout"/>
+        app:layout_constraintTop_toBottomOf="@id/latitudeLayout"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/longitudeLayout"
@@ -72,8 +98,7 @@
         android:layout_margin="@dimen/margin"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
 
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/longitudeLabel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/longitudeText">
 
@@ -95,16 +120,15 @@
         android:inputType="numberDecimal"
         android:textSize="@dimen/middle_text_size"
 
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/longitudeLabel"
         app:layout_constraintStart_toEndOf="@+id/longitudeLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/coordinatesEditButton"
+        android:id="@+id/coordinatesSubmitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/big_margin"
+        android:layout_margin="@dimen/margin"
         android:padding="@dimen/padding"
         android:text="@string/submitButtonText"
         android:textSize="@dimen/middle_text_size"

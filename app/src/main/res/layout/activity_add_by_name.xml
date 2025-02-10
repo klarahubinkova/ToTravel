@@ -8,23 +8,34 @@
     android:padding="@dimen/padding"
     tools:context=".AddByNameActivity">
 
+    <TextView
+        android:id="@+id/nameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/name_label"
+        android:textSize="@dimen/middle_text_size"
+        android:labelFor="@id/latitudeAutoComplete"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <EditText
         android:id="@+id/nameEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
-        android:autofillHints="@string/name_edit_hint"
+        android:autofillHints="@string/name_edit"
         android:hint="@string/name_edit"
         android:inputType="text"
         android:textSize="@dimen/middle_text_size"
 
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/nameEditButton"
+        android:id="@+id/nameSubmitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin"
