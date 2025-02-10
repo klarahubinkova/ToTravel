@@ -5,6 +5,7 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 
@@ -14,52 +15,63 @@ class AddByCoordinatesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_by_coordinates)
 
+        val nameEditText = findViewById<EditText>(R.id.coordinatesNameEdit)
+
         val latitudeEditText = findViewById<EditText>(R.id.latitudeText)
-        latitudeEditText.filters = arrayOf<InputFilter>(MinMaxFilter(0, 90))
+        latitudeEditText.filters = arrayOf<InputFilter>(MinMaxFilter(0.0, 90.0))
         val longitudeEditText = findViewById<EditText>(R.id.longitudeText)
-        longitudeEditText.filters = arrayOf<InputFilter>(MinMaxFilter(0, 180))
+        longitudeEditText.filters = arrayOf<InputFilter>(MinMaxFilter(0.0, 180.0))
 
-        val latitude = arrayOf("N", "S")
-        val longitude = arrayOf("E", "W")
+        val latitudeDirections = LatitudeDirection.entries.toTypedArray()
+        val longitudeDirections = LongitudeDirection.entries.toTypedArray()
+        var selectedLatitudeDirection: LatitudeDirection = LatitudeDirection.N
+        var selectedLongitudeDirection: LongitudeDirection = LongitudeDirection.E
 
-        val latitudeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, latitude)
-        val longitudeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, longitude)
+        val latitudeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, latitudeDirections)
+        val longitudeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, longitudeDirections)
 
         val latitudeDropdownMenu: AutoCompleteTextView = findViewById(R.id.latitudeAutoComplete)
         latitudeDropdownMenu.setAdapter(latitudeAdapter)
         latitudeDropdownMenu.setOnItemClickListener { _, _, position, _ ->
-            val selectedLatitude = latitude[position]
+            selectedLatitudeDirection = latitudeDirections[position]
         }
 
         val longitudeDropdownMenu: AutoCompleteTextView = findViewById(R.id.longitudeAutoComplete)
         longitudeDropdownMenu.setAdapter(longitudeAdapter)
         longitudeDropdownMenu.setOnItemClickListener { _, _, position, _ ->
-            val selectedLongitude = longitude[position]
+            selectedLongitudeDirection = longitudeDirections[position]
+        }
+
+        val submitButton = findViewById<Button>(R.id.coordinatesSubmitButton)
+        submitButton.setOnClickListener {
+            val name: String = nameEditText.text.toString()
+            val latitude: Double = latitudeEditText.text.toString().toDoubleOrNull() ?: 0.0
+            val longitude: Double = longitudeEditText.text.toString().toDoubleOrNull() ?: 0.0
+
+            addPointByCoordinates(name, latitude, longitude, selectedLatitudeDirection, selectedLongitudeDirection)
         }
     }
 
     inner class MinMaxFilter() : InputFilter {
-        private var intMin: Int = 0
-        private var intMax: Int = 0
+        private var min: Double = 0.0
+        private var max: Double = 0.0
 
-        constructor(minValue: Int, maxValue: Int) : this() {
-            this.intMin = minValue
-            this.intMax = maxValue
+        constructor(minValue: Double, maxValue: Double) : this() {
+            min = minValue
+            max = maxValue
         }
 
         override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dStart: Int, dEnd: Int): CharSequence? {
             try {
-                val input = Integer.parseInt(dest.toString() + source.toString())
-                if (isInRange(intMin, intMax, input)) {
+                val input = (dest.toString() + source.toString()).toDouble()
+                if (isInRange(min, max, input)) {
                     return null
                 }
             } catch (_: NumberFormatException) { }
             return ""
         }
 
-        // Check if input c is in between min a and max b and
-        // returns corresponding boolean
-        private fun isInRange(a: Int, b: Int, c: Int): Boolean {
+        private fun isInRange(a: Double, b: Double, c: Double): Boolean {
             return if (b > a) c in a..b else c in b..a
         }
     }

@@ -8,12 +8,9 @@
     <string name="add_by_name">Name</string>
     <string name="add_by_location">Coordinates</string>
     <string name="add_point_heading">What do you know about he place you want to add?</string>
+    <string name="name_label">Name</string>
     <string name="name_edit">Name of the place</string>
-    <string name="name_edit_hint">Fill in the name of the place</string>
     <string name="latitude">Latitude</string>
-    <string name="latitude_hint">North/South</string>
     <string name="longitude">Longitude</string>
-    <string name="longitude_hint">East/West</string>
     <string name="submitButtonText">Submit</string>
-    <string name="select">Select item</string>
 </resources>
