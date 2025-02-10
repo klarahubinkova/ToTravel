@@ -18,15 +18,16 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         tools:layout="@layout/activity_main" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/add_button_margin"
-        android:layout_marginBottom="@dimen/add_button_margin"
+        android:layout_marginEnd="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
         android:contentDescription="@string/add_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:text="@string/plus"
+        android:textSize="@dimen/middle_text_size"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

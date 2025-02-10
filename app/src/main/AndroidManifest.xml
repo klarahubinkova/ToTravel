@@ -12,10 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ToTravel"
         tools:targetApi="31">
+        <activity
+            android:name=".AddByCoordinatesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddByNameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddPointActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_map_api_key"/>
+            android:value="@string/google_map_api_key" />
 
         <activity
             android:name=".MainActivity"

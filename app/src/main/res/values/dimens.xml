@@ -1,3 +1,7 @@
 <resources>
-    <dimen name="add_button_margin">16dp</dimen>
+    <dimen name="padding">16dp</dimen>
+    <dimen name="big_margin">40dp</dimen>
+    <dimen name="margin">16dp</dimen>
+    <dimen name="text_size">40sp</dimen>
+    <dimen name="middle_text_size">24sp</dimen>
 </resources>

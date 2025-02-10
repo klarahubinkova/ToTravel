@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">ToTravel</string>
     <string name="google_map_api_key">AIzaSyCUH3au0CPPP7rA_zfoGN382hdvVZgFEuE</string>
+    <string name="plus">+</string>
     <string name="add_button">Add a new marker on the map</string>
+    <string name="add_by_name_button">Add a new marker on the map by using a name of the place</string>
+    <string name="add_by_location_button">Add a new marker on the map by using coordinates of the place </string>
+    <string name="add_by_name">Name</string>
+    <string name="add_by_location">Coordinates</string>
+    <string name="add_point_heading">What do you know about he place you want to add?</string>
+    <string name="name_edit">Name of the place</string>
+    <string name="name_edit_hint">Fill in the name of the place</string>
+    <string name="latitude">Latitude</string>
+    <string name="latitude_hint">North/South</string>
+    <string name="longitude">Longitude</string>
+    <string name="longitude_hint">East/West</string>
+    <string name="submitButtonText">Submit</string>
+    <string name="select">Select item</string>
 </resources>
