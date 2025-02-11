@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,22 +40,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.setOnMapLoadedCallback {
+            val bounds = LatLngBounds.builder()
+            Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
+        }
+
         map = googleMap
+
+        showPointsOnMap()
     }
 
     override fun onResume() {
         super.onResume()
 
         Points.savePoints(this)
-        map?.clear()
 
-        for (p in Points.list) {
-            map?.addMarker(MarkerOptions().position(LatLng(p.latitude, p.longitude)).title(p.name))
-        }
+        showPointsOnMap()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Points.savePoints(this)
+    }
+
+    private fun showPointsOnMap() {
+        map?.clear()
+
+        for (p in Points.list) {
+            map?.addMarker(
+                MarkerOptions()
+                    .position(LatLng(p.latitude, p.longitude))
+                    .title(p.name)
+            )
+        }
     }
 }

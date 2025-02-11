@@ -1,5 +1,6 @@
 package cz.cuni.mff.hubinkok.totravel
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.Spanned
@@ -8,6 +9,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+
 
 class AddByCoordinatesActivity : AppCompatActivity() {
 
@@ -49,6 +51,10 @@ class AddByCoordinatesActivity : AppCompatActivity() {
             val longitude: Double = longitudeEditText.text.toString().toDoubleOrNull() ?: 0.0
 
             addPointByCoordinates(name, latitude, longitude, selectedLatitudeDirection, selectedLongitudeDirection)
+
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            startActivity(intent)
         }
     }
 

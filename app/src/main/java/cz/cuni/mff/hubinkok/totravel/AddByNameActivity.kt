@@ -1,5 +1,6 @@
 package cz.cuni.mff.hubinkok.totravel
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -17,6 +18,10 @@ class AddByNameActivity : AppCompatActivity() {
             val name = nameEditText.text.toString()
 
             addPointByName(name)
+
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            startActivity(intent)
         }
     }
 }
