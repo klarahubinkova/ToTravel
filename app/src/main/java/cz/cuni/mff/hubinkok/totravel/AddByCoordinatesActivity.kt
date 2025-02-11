@@ -33,12 +33,14 @@ class AddByCoordinatesActivity : AppCompatActivity() {
         val longitudeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, longitudeDirections)
 
         val latitudeDropdownMenu: AutoCompleteTextView = findViewById(R.id.latitudeAutoComplete)
+        latitudeDropdownMenu.setText(selectedLatitudeDirection.name)
         latitudeDropdownMenu.setAdapter(latitudeAdapter)
         latitudeDropdownMenu.setOnItemClickListener { _, _, position, _ ->
             selectedLatitudeDirection = latitudeDirections[position]
         }
 
         val longitudeDropdownMenu: AutoCompleteTextView = findViewById(R.id.longitudeAutoComplete)
+        longitudeDropdownMenu.setText(selectedLongitudeDirection.name)
         longitudeDropdownMenu.setAdapter(longitudeAdapter)
         longitudeDropdownMenu.setOnItemClickListener { _, _, position, _ ->
             selectedLongitudeDirection = longitudeDirections[position]
