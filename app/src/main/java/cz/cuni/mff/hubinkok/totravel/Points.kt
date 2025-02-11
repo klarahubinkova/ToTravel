@@ -16,14 +16,16 @@ fun addPointByCoordinates(name: String, latitude: Double, longitude: Double,
                           longitudeDirection: LongitudeDirection) {
     val lat = if (latitudeDirection == LatitudeDirection.N) latitude else -latitude
     val lon = if (longitudeDirection == LongitudeDirection.E) longitude else -longitude
-    Points.list.add(Point(lat, lon, name))
+    Points.list.add(Point(Points.getNewId(), lat, lon, name))
 }
 
 data class Point (
+    val id: Int,
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    val note: String = ""
+    val note: String = "",
+    val tag: PointTag = PointTag.VISIT
 )
 
 object Points {
@@ -41,8 +43,13 @@ object Points {
         saveToFile(context, getStringFromPoints(list))
     }
 
-    fun deletePoints() {
+    fun deletePoints(context: Context) {
         list = mutableListOf()
+        savePoints(context)
+    }
+
+    fun getNewId(): Int {
+        return list.size + 1
     }
 
     private fun readFile(context: Context): String? {
@@ -74,10 +81,17 @@ object Points {
             val longitude = coordinates.getDouble(0)
             val latitude = coordinates.getDouble(1)
 
+            val id = properties.getInt("id")
             val name = properties.optString("name", "")
             val note = properties.optString("note", "")
+            val tagString = properties.optString("tag", "VISIT")
+            val tag = try {
+                PointTag.valueOf(tagString)
+            } catch (_: IllegalArgumentException) {
+                PointTag.VISIT
+            }
 
-            points.add(Point(latitude, longitude, name, note))
+            points.add(Point(id, latitude, longitude, name, note, tag))
         }
         return points
     }
@@ -96,8 +110,10 @@ object Points {
             geometry.put("coordinates", JSONArray(listOf(point.longitude, point.latitude)))
 
             val properties = JSONObject()
+            properties.put("id", point.id)
             properties.put("name", point.name)
             properties.put("note", point.note)
+            properties.put("tag", point.tag.name)
 
             feature.put("geometry", geometry)
             feature.put("properties", properties)

@@ -45,9 +45,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 .setTitle("Confirm Deletion")
                 .setMessage("Are you sure you want to delete all the points? This action cannot be undone.")
                 .setPositiveButton("Delete") { _, _ ->
-                    Points.deletePoints()
-                    map?.clear()
-                    Points.savePoints(this)
+                    Points.deletePoints(this)
+                    showPointsOnMap()
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -56,12 +55,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
-        if (Points.list.isNotEmpty()) {
-            val bounds = LatLngBounds.builder()
-            Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100))
-        }
 
         showPointsOnMap()
     }
@@ -86,8 +79,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             map?.addMarker(
                 MarkerOptions()
                     .position(LatLng(p.latitude, p.longitude))
-                    .title(p.name)
+                    .title(p.id.toString())
             )
+        }
+
+        if (Points.list.isNotEmpty()) {
+            val bounds = LatLngBounds.builder()
+            Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
+            map?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100))
         }
     }
 }
