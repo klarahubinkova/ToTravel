@@ -11,6 +11,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
@@ -91,6 +93,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
                     .position(LatLng(p.latitude, p.longitude))
                     .title(p.id.toString())
                     .snippet(p.name)
+                    .icon(getMarkerColor(p.tag))
             )
         }
 
@@ -98,6 +101,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
             val bounds = LatLngBounds.builder()
             Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
             map?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100))
+        }
+    }
+
+    private fun getMarkerColor(tag: PointTag): BitmapDescriptor {
+        return when (tag) {
+            PointTag.VISIT -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+            PointTag.PLANNED -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+            PointTag.VISITED -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+            PointTag.FAVOURITE -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)
+            PointTag.CUSTOM -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
         }
     }
 }
