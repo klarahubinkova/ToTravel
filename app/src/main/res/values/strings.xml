@@ -14,5 +14,9 @@
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="submitButtonText">Submit</string>
+    <string name="deleteButtonText">Delete</string>
     <string name="trash_bin">🗑</string>
+    <string name="tag">Tag</string>
+    <string name="note_label">Note</string>
+    <string name="note_edit">Note for the place</string>
 </resources>

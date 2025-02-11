@@ -21,6 +21,9 @@
         <activity
             android:name=".AddPointActivity"
             android:exported="false" />
+        <activity
+            android:name=".PointDetailActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -23,9 +23,9 @@ data class Point (
     val id: Int,
     val latitude: Double,
     val longitude: Double,
-    val name: String,
-    val note: String = "",
-    val tag: PointTag = PointTag.VISIT
+    var name: String,
+    var note: String = "",
+    var tag: PointTag = PointTag.VISIT
 )
 
 object Points {
@@ -50,6 +50,24 @@ object Points {
 
     fun getNewId(): Int {
         return list.size + 1
+    }
+
+    fun getPointById(id: Int): Point? {
+        for (point: Point in list) {
+            if (point.id == id) {
+                return point
+            }
+        }
+
+        return null
+    }
+
+    fun deletePointById(id: Int) {
+        for (point: Point in list) {
+            if (point.id == id) {
+                list.remove(point)
+            }
+        }
     }
 
     private fun readFile(context: Context): String? {

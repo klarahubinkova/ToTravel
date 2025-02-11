@@ -8,16 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickListener {
     private var map: GoogleMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,9 +56,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        googleMap.setOnInfoWindowClickListener(this)
         map = googleMap
 
         showPointsOnMap()
+    }
+
+    override fun onInfoWindowClick(marker: Marker) {
+        val intent = Intent(this, PointDetailActivity::class.java).apply {
+            putExtra("id", marker.title?.toInt())
+        }
+        startActivity(intent)
     }
 
     override fun onResume() {
@@ -80,6 +90,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 MarkerOptions()
                     .position(LatLng(p.latitude, p.longitude))
                     .title(p.id.toString())
+                    .snippet(p.name)
             )
         }
 

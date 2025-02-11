@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding"
+    tools:context=".AddPointActivity">
+
+    <TextView
+        android:id="@+id/pointNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/name_label"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/pointNameEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:autofillHints="@string/name_edit"
+        android:hint="@string/name_edit"
+        android:inputType="text"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toBottomOf="@id/pointNameLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tagLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/tag"
+        android:textSize="@dimen/middle_text_size"
+        android:labelFor="@id/tagAutoComplete"
+
+        app:layout_constraintTop_toBottomOf="@id/pointNameEdit"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tagLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+
+        app:layout_constraintTop_toBottomOf="@id/tagLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="parent">
+
+        <AutoCompleteTextView
+            android:id="@+id/tagAutoComplete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/noteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:text="@string/note_label"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toBottomOf="@id/tagLayout"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/noteEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:autofillHints="@string/note_edit"
+        android:hint="@string/note_edit"
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:minLines="3"
+        android:maxLines="10"
+        android:scrollbars="vertical"
+        android:overScrollMode="always"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toBottomOf="@id/noteLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/pointDeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:padding="@dimen/padding"
+        android:text="@string/deleteButtonText"
+        android:textSize="@dimen/middle_text_size"
+        app:backgroundTint="?attr/colorError"
+
+        app:layout_constraintTop_toBottomOf="@+id/noteEdit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/pointSubmitButton" />
+
+    <Button
+        android:id="@+id/pointSubmitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin"
+        android:padding="@dimen/padding"
+        android:text="@string/submitButtonText"
+        android:textSize="@dimen/middle_text_size"
+
+        app:layout_constraintTop_toBottomOf="@+id/noteEdit"
+        app:layout_constraintStart_toEndOf="@+id/pointDeleteButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
