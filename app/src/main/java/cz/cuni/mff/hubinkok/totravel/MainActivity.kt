@@ -1,5 +1,6 @@
 package cz.cuni.mff.hubinkok.totravel
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -37,16 +38,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this, AddPointActivity::class.java)
             startActivity(intent)
         }
+
+        val deleteButton = findViewById<Button>(R.id.deleteButton)
+        deleteButton.setOnClickListener{
+            AlertDialog.Builder(this)
+                .setTitle("Confirm Deletion")
+                .setMessage("Are you sure you want to delete all the points? This action cannot be undone.")
+                .setPositiveButton("Delete") { _, _ ->
+                    Points.deletePoints()
+                    map?.clear()
+                    Points.savePoints(this)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        googleMap.setOnMapLoadedCallback {
+        map = googleMap
+
+        if (Points.list.isNotEmpty()) {
             val bounds = LatLngBounds.builder()
             Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100))
         }
-
-        map = googleMap
 
         showPointsOnMap()
     }

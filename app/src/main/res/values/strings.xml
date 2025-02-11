@@ -3,6 +3,7 @@
     <string name="google_map_api_key">AIzaSyCUH3au0CPPP7rA_zfoGN382hdvVZgFEuE</string>
     <string name="plus">+</string>
     <string name="add_button">Add a new marker on the map</string>
+    <string name="delete_button">Delete all markers from the map</string>
     <string name="add_by_name_button">Add a new marker on the map by using a name of the place</string>
     <string name="add_by_location_button">Add a new marker on the map by using coordinates of the place </string>
     <string name="add_by_name">Name</string>
@@ -13,4 +14,5 @@
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="submitButtonText">Submit</string>
+    <string name="trash_bin">🗑</string>
 </resources>

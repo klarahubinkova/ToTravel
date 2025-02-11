@@ -19,6 +19,19 @@
         tools:layout="@layout/activity_main" />
 
     <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        android:contentDescription="@string/delete_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:backgroundTint="?attr/colorError"
+        android:text="@string/trash_bin"
+        android:textSize="@dimen/middle_text_size"/>
+
+    <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

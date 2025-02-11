@@ -27,7 +27,7 @@ data class Point (
 )
 
 object Points {
-    private val fileName = "data.json"
+    private const val FILE_NAME = "data.json"
     var list: MutableList<Point> = mutableListOf()
 
     suspend fun loadPoints(context: Context) {
@@ -41,13 +41,17 @@ object Points {
         saveToFile(context, getStringFromPoints(list))
     }
 
+    fun deletePoints() {
+        list = mutableListOf()
+    }
+
     private fun readFile(context: Context): String? {
-        val file = File(context.filesDir, fileName)
+        val file = File(context.filesDir, FILE_NAME)
         return if (file.exists()) file.readText() else null
     }
 
     private fun saveToFile(context: Context, data: String) {
-        val file = File(context.filesDir, fileName)
+        val file = File(context.filesDir, FILE_NAME)
 
         if (!file.exists()) {
             file.createNewFile()
