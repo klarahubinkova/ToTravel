@@ -5,10 +5,65 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.atomic.AtomicInteger
 
-fun addPointByName(name: String){
-    //TODO
+suspend fun searchPlace(query: String): Point? {
+    val urlString = "https://nominatim.openstreetmap.org/search?format=json&q=$query"
+    val url = URL(urlString)
+    val connection = withContext(Dispatchers.IO) {
+        url.openConnection()
+    } as HttpURLConnection
+
+    try {
+        connection.requestMethod = "GET"
+        connection.setRequestProperty("User-Agent", "ToTravel")
+
+        val responseCode = connection.responseCode
+
+        if (responseCode != HttpURLConnection.HTTP_OK) {
+            return null
+        }
+
+        val reader = BufferedReader(InputStreamReader(connection.inputStream))
+        val response = reader.readText()
+        withContext(Dispatchers.IO) {
+            reader.close()
+        }
+
+        return getPoint(response)
+    } catch (_: Exception) {
+        return null
+    } finally {
+        connection.disconnect()
+    }
+}
+
+fun getPoint(response: String): Point {
+    val item = JSONArray(response).getJSONObject(0)
+
+    val name = item.getString("name")
+    val latitude = item.getString("lat").toDouble()
+    val longitude = item.getString("lon").toDouble()
+
+    return Point(Points.getNewId(), latitude, longitude, name)
+}
+
+suspend fun addPointByName(name: String){
+    withContext(Dispatchers.IO) {
+        val point = searchPlace(name)
+
+        if (point == null) {
+            throw NoSuchElementException()
+        }
+        else {
+            Points.list.add(point)
+        }
+    }
 }
 
 fun addPointByCoordinates(name: String, latitude: Double, longitude: Double,
@@ -30,59 +85,54 @@ data class Point (
 
 object Points {
     private const val FILE_NAME = "data.json"
+    private val maxId = AtomicInteger(0)
     var list: MutableList<Point> = mutableListOf()
 
     suspend fun loadPoints(context: Context) {
         withContext(Dispatchers.IO) {
             val data = readFile(context)
             list = if (data != null) getPointsFromString(data).toMutableList() else mutableListOf()
+            maxId.set(list.lastOrNull()?.id ?: 0)
         }
     }
 
-    fun savePoints(context: Context) {
-        saveToFile(context, getStringFromPoints(list))
+    suspend fun savePoints(context: Context) {
+        withContext(Dispatchers.IO) {
+            saveToFile(context, getStringFromPoints(list))
+        }
     }
 
-    fun deletePoints(context: Context) {
-        list = mutableListOf()
-        savePoints(context)
+    suspend fun deletePoints(context: Context) {
+        withContext(Dispatchers.IO) {
+            list = mutableListOf()
+            savePoints(context)
+        }
     }
 
     fun getNewId(): Int {
-        return list.size + 1
+        return maxId.incrementAndGet()
     }
 
     fun getPointById(id: Int): Point? {
-        for (point: Point in list) {
-            if (point.id == id) {
-                return point
-            }
-        }
-
-        return null
+        return list.find { it.id == id }
     }
 
     fun deletePointById(id: Int) {
-        for (point: Point in list) {
-            if (point.id == id) {
-                list.remove(point)
-            }
+        list.removeIf { it.id == id }
+    }
+
+    private suspend fun readFile(context: Context): String? {
+        return withContext(Dispatchers.IO) {
+            val file = File(context.filesDir, FILE_NAME)
+            if (file.exists()) file.readText() else null
         }
     }
 
-    private fun readFile(context: Context): String? {
-        val file = File(context.filesDir, FILE_NAME)
-        return if (file.exists()) file.readText() else null
-    }
-
-    private fun saveToFile(context: Context, data: String) {
-        val file = File(context.filesDir, FILE_NAME)
-
-        if (!file.exists()) {
-            file.createNewFile()
+    private suspend fun saveToFile(context: Context, data: String) {
+        withContext(Dispatchers.IO) {
+            val file = File(context.filesDir, FILE_NAME)
+            file.outputStream().use { it.write(data.toByteArray()) }
         }
-
-        file.writeText(data)
     }
 
     private fun getPointsFromString(data: String): List<Point> {

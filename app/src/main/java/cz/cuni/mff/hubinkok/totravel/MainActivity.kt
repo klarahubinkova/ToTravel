@@ -49,8 +49,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
                 .setTitle("Confirm Deletion")
                 .setMessage("Are you sure you want to delete all the points? This action cannot be undone.")
                 .setPositiveButton("Delete") { _, _ ->
-                    Points.deletePoints(this)
-                    showPointsOnMap()
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            Points.deletePoints(this@MainActivity)
+                            showPointsOnMap()
+                        }
+                    }
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -74,14 +78,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
     override fun onResume() {
         super.onResume()
 
-        Points.savePoints(this)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Points.savePoints(this@MainActivity)
+            }
+        }
 
         showPointsOnMap()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Points.savePoints(this)
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { Points.savePoints(this@MainActivity) }
+        }
     }
 
     private fun showPointsOnMap() {
