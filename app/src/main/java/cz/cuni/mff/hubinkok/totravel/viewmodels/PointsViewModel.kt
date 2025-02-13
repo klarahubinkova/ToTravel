@@ -20,6 +20,10 @@ class PointsViewModel : ViewModel() {
 
     private val repository = PointsRepository()
 
+    fun update() {
+        _pointsList.postValue(repository.getPoints())
+    }
+
     fun getPointById(id: Int): Point? {
         return repository.getPointById(id)
     }
@@ -27,7 +31,7 @@ class PointsViewModel : ViewModel() {
     fun deletePointById(id: Int) {
         val result = repository.deletePointById(id)
         if (result) {
-            _pointsList.postValue(repository.getPoints())
+            update()
         } else {
             setError("Point with ID $id does not exist")
         }
@@ -35,7 +39,7 @@ class PointsViewModel : ViewModel() {
 
     suspend fun loadPoints(context: Context) {
         repository.loadPoints(context)
-        _pointsList.postValue(repository.getPoints())
+        update()
     }
 
     suspend fun savePoints(context: Context) {
@@ -51,7 +55,7 @@ class PointsViewModel : ViewModel() {
         withContext(Dispatchers.IO) {
             val result = repository.addPointByName(name)
             if (result) {
-                _pointsList.postValue(repository.getPoints())
+                update()
             } else {
                 setError("Place not found")
             }
@@ -66,7 +70,7 @@ class PointsViewModel : ViewModel() {
         longitudeDirection: LongitudeDirection
     ) {
         repository.addPointByCoordinates(name, latitude, longitude, latitudeDirection, longitudeDirection)
-        _pointsList.postValue(repository.getPoints())
+        update()
     }
 
     private fun setError(message: String) {

@@ -49,6 +49,7 @@ class PointDetailActivity : AppCompatActivity() {
         submitButton.setOnClickListener{
             point.name = nameEdit.text.toString()
             point.note = noteEdit.text.toString()
+            viewModel.update()
 
             val intent = Intent(applicationContext, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
