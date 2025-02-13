@@ -1,4 +1,4 @@
-package cz.cuni.mff.hubinkok.totravel
+package cz.cuni.mff.hubinkok.totravel.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,13 +9,23 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import cz.cuni.mff.hubinkok.totravel.MainActivity
+import cz.cuni.mff.hubinkok.totravel.R
+import cz.cuni.mff.hubinkok.totravel.ToTravelApplication
+import cz.cuni.mff.hubinkok.totravel.data.LatitudeDirection
+import cz.cuni.mff.hubinkok.totravel.data.LongitudeDirection
+import cz.cuni.mff.hubinkok.totravel.viewmodels.PointsViewModel
 
 
 class AddByCoordinatesActivity : AppCompatActivity() {
+    private lateinit var viewModel: PointsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_by_coordinates)
+
+        viewModel = ViewModelProvider(application as ToTravelApplication)[PointsViewModel::class.java]
 
         val nameEditText = findViewById<EditText>(R.id.coordinatesNameEdit)
 
@@ -52,10 +62,10 @@ class AddByCoordinatesActivity : AppCompatActivity() {
             val latitude: Double = latitudeEditText.text.toString().toDoubleOrNull() ?: 0.0
             val longitude: Double = longitudeEditText.text.toString().toDoubleOrNull() ?: 0.0
 
-            addPointByCoordinates(name, latitude, longitude, selectedLatitudeDirection, selectedLongitudeDirection)
+            viewModel.addPointByCoordinates(name, latitude, longitude, selectedLatitudeDirection, selectedLongitudeDirection)
 
             val intent = Intent(applicationContext, MainActivity::class.java)
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
     }

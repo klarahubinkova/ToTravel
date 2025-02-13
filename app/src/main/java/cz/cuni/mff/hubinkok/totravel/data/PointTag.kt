@@ -1,4 +1,4 @@
-package cz.cuni.mff.hubinkok.totravel
+package cz.cuni.mff.hubinkok.totravel.data
 
 enum class PointTag {
     VISIT,

@@ -1,9 +1,10 @@
-package cz.cuni.mff.hubinkok.totravel
+package cz.cuni.mff.hubinkok.totravel.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import cz.cuni.mff.hubinkok.totravel.R
 
 class AddPointActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

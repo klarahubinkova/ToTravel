@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -17,20 +18,25 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.Dispatchers
+import cz.cuni.mff.hubinkok.totravel.data.Point
+import cz.cuni.mff.hubinkok.totravel.data.PointTag
+import cz.cuni.mff.hubinkok.totravel.ui.AddPointActivity
+import cz.cuni.mff.hubinkok.totravel.ui.PointDetailActivity
+import cz.cuni.mff.hubinkok.totravel.viewmodels.PointsViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickListener {
     private var map: GoogleMap? = null
+    private lateinit var viewModel: PointsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
+        viewModel = ViewModelProvider(application as ToTravelApplication)[PointsViewModel::class.java]
+
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) { Points.loadPoints(this@MainActivity) }
+            viewModel.loadPoints(this@MainActivity)
         }
 
         val mapFragment = supportFragmentManager
@@ -50,22 +56,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
                 .setMessage("Are you sure you want to delete all the points? This action cannot be undone.")
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch {
-                        withContext(Dispatchers.IO) {
-                            Points.deletePoints(this@MainActivity)
-                            showPointsOnMap()
-                        }
+                        viewModel.deletePoints(this@MainActivity)
                     }
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
         }
+
+        viewModel.pointsList.observe(this) { showPointsOnMap(it) }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         googleMap.setOnInfoWindowClickListener(this)
         map = googleMap
-
-        showPointsOnMap()
     }
 
     override fun onInfoWindowClick(marker: Marker) {
@@ -79,26 +82,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
         super.onResume()
 
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                Points.savePoints(this@MainActivity)
-            }
+            viewModel.savePoints(this@MainActivity)
         }
-
-        showPointsOnMap()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         lifecycleScope.launch {
-            withContext(Dispatchers.IO) { Points.savePoints(this@MainActivity) }
+            viewModel.savePoints(this@MainActivity)
         }
     }
 
-    private fun showPointsOnMap() {
+    private fun showPointsOnMap(points: List<Point>) {
         map?.clear()
 
-        for (p in Points.list) {
+        for (p in points) {
             map?.addMarker(
                 MarkerOptions()
                     .position(LatLng(p.latitude, p.longitude))
@@ -108,9 +107,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
             )
         }
 
-        if (Points.list.isNotEmpty()) {
+        if (points.isNotEmpty()) {
             val bounds = LatLngBounds.builder()
-            Points.list.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
+            points.forEach { bounds.include(LatLng(it.latitude, it.longitude)) }
             map?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100))
         }
     }

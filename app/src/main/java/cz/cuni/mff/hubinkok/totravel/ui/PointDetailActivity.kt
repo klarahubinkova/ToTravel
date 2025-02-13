@@ -1,4 +1,4 @@
-package cz.cuni.mff.hubinkok.totravel
+package cz.cuni.mff.hubinkok.totravel.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,14 +7,26 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
+import cz.cuni.mff.hubinkok.totravel.MainActivity
+import cz.cuni.mff.hubinkok.totravel.R
+import cz.cuni.mff.hubinkok.totravel.ToTravelApplication
+import cz.cuni.mff.hubinkok.totravel.data.Point
+import cz.cuni.mff.hubinkok.totravel.data.PointTag
+import cz.cuni.mff.hubinkok.totravel.viewmodels.PointsViewModel
 
 class PointDetailActivity : AppCompatActivity() {
+    private lateinit var viewModel: PointsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_point_detail)
 
+        viewModel = ViewModelProvider(application as ToTravelApplication)[PointsViewModel::class.java]
+
         val id = intent.getIntExtra("id", -1)
-        val point: Point = Points.getPointById(id)
+        val point: Point = viewModel.getPointById(id)
             ?: Point(id, 0.0, 0.0, "")
 
         val nameEdit = findViewById<EditText>(R.id.pointNameEdit)
@@ -39,17 +51,28 @@ class PointDetailActivity : AppCompatActivity() {
             point.note = noteEdit.text.toString()
 
             val intent = Intent(applicationContext, MainActivity::class.java)
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
 
         val deleteButton = findViewById<Button>(R.id.pointDeleteButton)
         deleteButton.setOnClickListener{
-            Points.deletePointById(id)
+            viewModel.deletePointById(id)
 
-            val intent = Intent(applicationContext, MainActivity::class.java)
-            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            startActivity(intent)
+            if (viewModel.errorMessage.value == null) {
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                startActivity(intent)
+            }
+        }
+
+        viewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                Snackbar.make(findViewById(android.R.id.content), it, Snackbar.LENGTH_SHORT)
+                    .setAnchorView(R.id.nameEdit)
+                    .show()
+                viewModel.clearError()
+            }
         }
     }
 }
