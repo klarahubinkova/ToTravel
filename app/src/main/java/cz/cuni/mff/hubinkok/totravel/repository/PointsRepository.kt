@@ -16,19 +16,45 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * Repository class for managing points.
+ * Handles CRUD operations and data persistence for points.
+ */
 class PointsRepository {
     private val fileName = "data.json"
     private var list = mutableListOf<Point>()
     private var maxId = AtomicInteger(0)
 
+    /**
+     * Retrieves the list of points.
+     *
+     * @return List of points currently stored.
+     */
     fun getPoints(): List<Point> = list
 
+    /**
+     * Generates a new unique ID for a point.
+     *
+     * @return New unique ID.
+     */
     private fun getNewId(): Int = maxId.incrementAndGet()
 
+    /**
+     * Finds a point by its ID.
+     *
+     * @param id The ID of the point.
+     * @return The matching point or null if not found.
+     */
     fun getPointById(id: Int): Point? {
         return list.find { it.id == id }
     }
 
+    /**
+     * Deletes a point by its ID.
+     *
+     * @param id The ID of the point to be deleted.
+     * @return True if the point was found and deleted, false otherwise.
+     */
     fun deletePointById(id: Int): Boolean {
         val point = list.find { it.id == id }
         return if (point != null) {
@@ -39,6 +65,11 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Loads points from the stored JSON file asynchronously.
+     *
+     * @param context The application context used to access the file.
+     */
     suspend fun loadPoints(context: Context) {
         withContext(Dispatchers.IO) {
             val data = readFile(context)
@@ -47,6 +78,12 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Reads the stored JSON file.
+     *
+     * @param context The application context used to access the file.
+     * @return The file content as a string, or null if the file does not exist.
+     */
     private suspend fun readFile(context: Context): String? {
         return withContext(Dispatchers.IO) {
             val file = File(context.filesDir, fileName)
@@ -54,6 +91,11 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Saves the current points list to the JSON file asynchronously.
+     *
+     * @param context The application context used to access the file.
+     */
     suspend fun saveToFile(context: Context) {
         withContext(Dispatchers.IO) {
             val file = File(context.filesDir, fileName)
@@ -61,6 +103,11 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Deletes all stored points and clears the file asynchronously.
+     *
+     * @param context The application context used to access the file.
+     */
     suspend fun deletePoints(context: Context) {
         withContext(Dispatchers.IO) {
             list.clear()
@@ -68,6 +115,15 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Adds a new point using coordinates.
+     *
+     * @param name The name of the point.
+     * @param latitude The latitude value.
+     * @param longitude The longitude value.
+     * @param latitudeDirection The latitude direction (N/S).
+     * @param longitudeDirection The longitude direction (E/W).
+     */
     fun addPointByCoordinates(
         name: String,
         latitude: Double,
@@ -81,6 +137,12 @@ class PointsRepository {
         list.add(Point(getNewId(), lat, lon, name))
     }
 
+    /**
+     * Adds a point by searching for a place name asynchronously.
+     *
+     * @param name The name of the place.
+     * @return True if the place was found and added, false otherwise.
+     */
     suspend fun addPointByName(name: String): Boolean {
         val point = searchPlace(name)
         return if (point != null) {
@@ -91,6 +153,12 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Converts a JSON string into a list of points.
+     *
+     * @param data The JSON data representing points.
+     * @return A list of points.
+     */
     private fun getPointsFromString(data: String): List<Point> {
         val points = mutableListOf<Point>()
         val jsonArray = JSONArray(data)
@@ -114,6 +182,12 @@ class PointsRepository {
         return points
     }
 
+    /**
+     * Converts a list of points into a JSON string.
+     *
+     * @param points The list of points to convert.
+     * @return JSON string representation of the points list.
+     */
     private fun getStringFromPoints(points: List<Point>): String {
         val jsonArray = JSONArray()
         for (point in points) {
@@ -130,6 +204,12 @@ class PointsRepository {
         return jsonArray.toString()
     }
 
+    /**
+     * Searches for a location using a Nominatim API.
+     *
+     * @param query The location name.
+     * @return A Point object if the place is found, or null otherwise.
+     */
     private suspend fun searchPlace(query: String): Point? {
         val urlString = "https://nominatim.openstreetmap.org/search?format=json&q=$query"
         val url = URL(urlString)
@@ -155,6 +235,12 @@ class PointsRepository {
         }
     }
 
+    /**
+     * Extracts a single point from a JSON response.
+     *
+     * @param response The JSON response from the API.
+     * @return A Point object.
+     */
     private fun getPoint(response: String): Point {
         val item = JSONArray(response).getJSONObject(0)
 

@@ -79,6 +79,17 @@ class AddByCoordinatesActivity : AppCompatActivity() {
             max = maxValue
         }
 
+        /**
+         * Filters user input to ensure that it falls within the specified numeric range.
+         *
+         * @param source The new text being entered by the user.
+         * @param start The start index of the new text.
+         * @param end The end index of the new text.
+         * @param dest The existing text in the input field.
+         * @param dStart The start index of the replacement text in `dest`.
+         * @param dEnd The end index of the replacement text in `dest`.
+         * @return Null if the input is valid, an empty string if the input is invalid.
+         */
         override fun filter(source: CharSequence, start: Int, end: Int, dest: Spanned, dStart: Int, dEnd: Int): CharSequence? {
             try {
                 val input = (dest.toString() + source.toString()).toDouble()
@@ -89,6 +100,15 @@ class AddByCoordinatesActivity : AppCompatActivity() {
             return ""
         }
 
+        /**
+         * Checks if a given number (c) falls within the inclusive range of [a, b].
+         * This method accounts for cases where min > max.
+         *
+         * @param a The lower bound.
+         * @param b The upper bound.
+         * @param c The number to check.
+         * @return True if c is within the range [a, b] (or [b, a] if b < a), false otherwise.
+         */
         private fun isInRange(a: Double, b: Double, c: Double): Boolean {
             return if (b > a) c in a..b else c in b..a
         }
