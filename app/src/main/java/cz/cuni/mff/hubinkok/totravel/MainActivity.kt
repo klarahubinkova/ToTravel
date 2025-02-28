@@ -1,8 +1,12 @@
 package cz.cuni.mff.hubinkok.totravel
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +33,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
     private var map: GoogleMap? = null
     private lateinit var viewModel: PointsViewModel
 
+    private lateinit var addButton: Button
+    private lateinit var deleteButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,17 +46,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
             viewModel.loadPoints(this@MainActivity)
         }
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
-        val addButton = findViewById<Button>(R.id.addButton)
+        addButton = findViewById(R.id.addButton)
         addButton.setOnClickListener{
             val intent = Intent(this, AddPointActivity::class.java)
             startActivity(intent)
         }
 
-        val deleteButton = findViewById<Button>(R.id.deleteButton)
+        deleteButton = findViewById(R.id.deleteButton)
         deleteButton.setOnClickListener{
             AlertDialog.Builder(this)
                 .setTitle("Confirm Deletion")
@@ -63,7 +66,58 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnInfoWindowClickL
                 .show()
         }
 
+        hideButtons()
+        loadMapIfConnected()
+
         viewModel.pointsList.observe(this) { showPointsOnMap(it) }
+    }
+
+    private fun hideButtons() {
+        addButton.visibility = View.GONE
+        deleteButton.visibility = View.GONE
+    }
+
+    private fun showButtons() {
+        addButton.visibility = View.VISIBLE
+        deleteButton.visibility = View.VISIBLE
+    }
+
+    private fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+    }
+
+    private fun loadMapIfConnected() {
+        if (isNetworkConnected(this)) {
+            loadMap()
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle("No Internet Connection")
+                .setMessage("The app cannot be used without an internet connection. Please connect to the internet.")
+                .setCancelable(false)
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                    if (isNetworkConnected(this)) {
+                        loadMap()
+                    } else {
+                        finish()
+                    }
+                }
+                .show()
+        }
+    }
+
+    private fun loadMap() {
+        showButtons()
+
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
