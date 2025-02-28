@@ -1,6 +1,5 @@
 <resources>
     <dimen name="padding">16dp</dimen>
-    <dimen name="big_margin">40dp</dimen>
     <dimen name="middle_margin">24dp</dimen>
     <dimen name="margin">16dp</dimen>
     <dimen name="text_size">40sp</dimen>
